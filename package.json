@@ -10,8 +10,7 @@
     "build": "tsc"
   },
   "files": [
-    "dist/*.js",
-    "dist/*.d.ts"
+    "dist/*"
   ],
   "repository": "github:henryv11/fastify-pg",
   "homepage": "https://github.com/henryv11/fastify-pg",
