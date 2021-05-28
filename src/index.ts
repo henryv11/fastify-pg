@@ -5,17 +5,20 @@ import { Client, ClientConfig, native, Pool, QueryConfig, QueryResult } from 'pg
 import { createDb, migrate } from 'postgres-migrations';
 export { QueryResult };
 
-export default fp<FastifyPgOptions>(async function fastifyPg(app, connectionOptions) {
-  const logger = app.log.child({ plugin: 'fastify-pg' });
-  const pg = native
-    ? (logger.info('using native libpq bindings'), native)
-    : (logger.info('using JavaScript bindings'), { Pool, Client });
-  await initializeDatabase(pg.Client, connectionOptions, logger);
-  const pool = new pg.Pool({ ...connectionOptions, log: logger.info.bind(logger) });
-  const database = new Database(pool, logger);
-  app.decorate('database', database);
-  app.addHook('onClose', async () => (logger.info('closing database pool ...'), await pool.end()));
-});
+export default fp<FastifyPgOptions>(
+  async function fastifyPg(app, connectionOptions) {
+    const logger = app.log.child({ plugin: 'fastify-pg' });
+    const pg = native
+      ? (logger.info('using native libpq bindings'), native)
+      : (logger.info('using JavaScript bindings'), { Pool, Client });
+    await initializeDatabase(pg.Client, connectionOptions, logger);
+    const pool = new pg.Pool({ ...connectionOptions, log: logger.info.bind(logger) });
+    const database = new Database(pool, logger);
+    app.decorate('database', database);
+    app.addHook('onClose', async () => (logger.info('closing database pool ...'), await pool.end()));
+  },
+  { name: 'fastify-pg' },
+);
 
 class Database {
   query: QueryFunction;
