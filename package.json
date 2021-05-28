@@ -1,0 +1,45 @@
+{
+  "name": "@heviir/fastify-pg",
+  "version": "1.0.0",
+  "description": "",
+  "main": "dist/index.js",
+  "scripts": {
+    "test": "jest",
+    "pg-up": "docker run -d --name fastify-pg-postgresql-test-container -p 5432:5432 -e POSTGRES_PASSWORD=postgres -e POSTGRES_USER=postgres postgres",
+    "pg-down": "docker stop fastify-pg-postgresql-test-container && docker rm fastify-pg-postgresql-test-container",
+    "build": "tsc"
+  },
+  "files": [
+    "dist/*.js",
+    "dist/*.d.ts"
+  ],
+  "repository": "github:henryv11/fastify-pg",
+  "homepage": "https://github.com/henryv11/fastify-pg",
+  "keywords": [
+    "nodejs",
+    "fastify",
+    "postgres"
+  ],
+  "author": "h.viirmae@gmail.com",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/jest": "^26.0.22",
+    "@types/pg": "^7.14.11",
+    "@typescript-eslint/eslint-plugin": "^4.21.0",
+    "@typescript-eslint/parser": "^4.21.0",
+    "eslint": "^7.23.0",
+    "eslint-config-prettier": "^8.1.0",
+    "eslint-plugin-prettier": "^3.3.1",
+    "jest": "^26.6.3",
+    "prettier": "^2.2.1",
+    "ts-jest": "^26.5.5",
+    "typescript": "^4.2.3"
+  },
+  "dependencies": {
+    "fastify": "^3.15.1",
+    "fastify-plugin": "^3.0.0",
+    "pg": "^8.6.0",
+    "pg-native": "^3.0.0",
+    "postgres-migrations": "^5.1.1"
+  }
+}
