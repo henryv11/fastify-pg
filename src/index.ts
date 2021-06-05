@@ -77,12 +77,13 @@ async function initializeDatabase(
   }
 }
 
-function attachLogger(query: QueryFunction, logger: Logger) {
-  return function (...args: Parameters<QueryFunction>) {
+function attachLogger(query: QueryFunction, logger: Logger): QueryFunction {
+  /* eslint-disable prefer-rest-params */
+  return function () {
     const t0 = performance.now();
-    let { text, values } = (args[0] as unknown) as QueryConfig;
-    if (!text) [text, values] = args;
-    return ((query(...args) as unknown) as Promise<QueryResult>)
+    let { text, values } = <QueryConfig>arguments[0];
+    if (!text) [text, values] = arguments;
+    return (<Promise<QueryResult>>(<unknown>query(...(<Parameters<QueryFunction>>(<unknown>arguments)))))
       .then(res => {
         logger.info({ text, values, duration: performance.now() - t0, resultsSize: res.rowCount }, 'database query');
         return res;
@@ -91,7 +92,8 @@ function attachLogger(query: QueryFunction, logger: Logger) {
         logger.error({ text, values, duration: performance.now() - t0, error }, 'database query failed');
         throw error;
       });
-  } as QueryFunction;
+  };
+  /* eslint-enable prefer-rest-params */
 }
 
 declare module 'fastify' {
