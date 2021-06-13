@@ -43,7 +43,7 @@ class Database {
     }
   }
 
-  async connection() {
+  async connection(): Promise<Connection> {
     const connection = await this.pool.connect();
     return {
       query: attachLogger(connection.query.bind(connection), this.logger),
@@ -104,15 +104,30 @@ declare module 'fastify' {
 
 export type FastifyPgOptions = DatabaseConnectionOptions & Partial<MigrationsOptions>;
 
-type DatabaseConnectionOptions = Required<Pick<ClientConfig, 'host' | 'port' | 'user' | 'password' | 'database'>>;
+export type DatabaseConnectionOptions = Required<
+  Pick<ClientConfig, 'host' | 'port' | 'user' | 'password' | 'database'>
+>;
 
-type MigrationsOptions = { migrationsDirectory: string };
+export type MigrationsOptions = { migrationsDirectory: string };
 
 type Logger = FastifyInstance['log'];
 
-type QueryFunction = Pool['query'];
+export type QueryFunction = <T = Record<string, unknown>>(
+  query: Query | string,
+  values?: unknown[],
+) => Promise<QueryResult<T>>;
 
-interface Transaction {
+export interface Query {
+  text: string;
+  values?: unknown[];
+}
+
+export interface Connection {
+  query: QueryFunction;
+  close: () => void;
+}
+
+export interface Transaction {
   query: QueryFunction;
   commit: () => Promise<void>;
   rollback: () => Promise<void>;
